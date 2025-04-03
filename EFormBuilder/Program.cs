@@ -5,7 +5,7 @@ using EFormBuilder.Services;
 using Microsoft.JSInterop;
 
 var builder = WebApplication.CreateBuilder(args);
-
+#nullable enable
 // Add services to the container
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
@@ -22,6 +22,9 @@ builder.Services.Configure<RouteOptions>(options =>
 {
     options.LowercaseUrls = true;
 });
+
+builder.Services.AddScoped<IJSRuntime>(provider => 
+    provider.GetRequiredService<IJSRuntime>());
 
 var app = builder.Build();
 

@@ -29,7 +29,7 @@
             </div>
             
             <div class="p-6">
-                <EditForm Model="@formData" OnValidSubmit="HandleValidSubmit">
+                <EditForm Model="this" OnValidSubmit="HandleValidSubmit">
                     <DataAnnotationsValidator />
                     
                     @foreach (var element in FormTemplate.Elements.OrderBy(e => e.Order))
@@ -40,10 +40,11 @@
                                 case "text":
                                     <div class="form-group">
                                         <label class="form-label">@element.Label @(element.Required ? "*" : "")</label>
-                                        <InputText class="form-input" 
-                                                 placeholder="@element.Placeholder"
-                                                 @bind-Value="formData[element.Id]"
-                                                 required="@element.Required" />
+                                        <input type="text" class="form-input" 
+                                               placeholder="@element.Placeholder"
+                                               value="@GetFormValue(element.Id)"
+                                               @onchange="@(e => SetFormValue(element.Id, e.Value.ToString()))"
+                                               required="@element.Required" />
                                         @if (!string.IsNullOrEmpty(element.HelpText))
                                         {
                                             <div class="text-sm text-gray-500 mt-1">@element.HelpText</div>
@@ -54,11 +55,12 @@
                                 case "textarea":
                                     <div class="form-group">
                                         <label class="form-label">@element.Label @(element.Required ? "*" : "")</label>
-                                        <InputTextArea class="form-input" 
-                                                     placeholder="@element.Placeholder"
-                                                     @bind-Value="formData[element.Id]"
-                                                     required="@element.Required"
-                                                     rows="3" />
+                                        <textarea class="form-input" 
+                                                  placeholder="@element.Placeholder"
+                                                  value="@GetFormValue(element.Id)"
+                                                  @onchange="@(e => SetFormValue(element.Id, e.Value.ToString()))"
+                                                  required="@element.Required"
+                                                  rows="3"></textarea>
                                         @if (!string.IsNullOrEmpty(element.HelpText))
                                         {
                                             <div class="text-sm text-gray-500 mt-1">@element.HelpText</div>
@@ -69,15 +71,16 @@
                                 case "select":
                                     <div class="form-group">
                                         <label class="form-label">@element.Label @(element.Required ? "*" : "")</label>
-                                        <InputSelect class="form-input" 
-                                                   @bind-Value="formData[element.Id]"
-                                                   required="@element.Required">
+                                        <select class="form-input"
+                                                value="@GetFormValue(element.Id)"
+                                                @onchange="@(e => SetFormValue(element.Id, e.Value.ToString()))"
+                                                required="@element.Required">
                                             <option value="">Select an option</option>
                                             @foreach (var option in element.Options)
                                             {
                                                 <option value="@option.Value">@option.Label</option>
                                             }
-                                        </InputSelect>
+                                        </select>
                                         @if (!string.IsNullOrEmpty(element.HelpText))
                                         {
                                             <div class="text-sm text-gray-500 mt-1">@element.HelpText</div>
@@ -88,9 +91,10 @@
                                 case "checkbox":
                                     <div class="form-group">
                                         <div class="flex items-center">
-                                            <InputCheckbox id="check-@element.Id" 
-                                                         @bind-Value="checkboxValues[element.Id]"
-                                                         class="mr-2" />
+                                            <input type="checkbox" id="check-@element.Id" 
+                                                   checked="@(GetCheckboxValue(element.Id))"
+                                                   @onchange="@(e => SetCheckboxValue(element.Id, e.Value))"
+                                                   class="mr-2" />
                                             <label for="check-@element.Id" class="cursor-pointer">
                                                 @element.Label @(element.Required ? "*" : "")
                                             </label>
@@ -105,9 +109,10 @@
                                 case "date":
                                     <div class="form-group">
                                         <label class="form-label">@element.Label @(element.Required ? "*" : "")</label>
-                                        <InputDate class="form-input" 
-                                                 @bind-Value="dateValues[element.Id]"
-                                                 required="@element.Required" />
+                                        <input type="date" class="form-input"
+                                               value="@(GetDateValue(element.Id))"
+                                               @onchange="@(e => SetDateValue(element.Id, e.Value))"
+                                               required="@element.Required" />
                                         @if (!string.IsNullOrEmpty(element.HelpText))
                                         {
                                             <div class="text-sm text-gray-500 mt-1">@element.HelpText</div>
@@ -152,19 +157,77 @@
                 {
                     if (element.Type.ToLower() == "checkbox")
                     {
-                        checkboxValues[element.Id] = element.DefaultValue == "true";
+                        checkboxValues[element.Id] = element.DefaultValue?.ToLower() == "true";
                     }
                     else if (element.Type.ToLower() == "date")
                     {
-                        dateValues[element.Id] = string.IsNullOrEmpty(element.DefaultValue) ? 
-                            null : DateTime.Parse(element.DefaultValue);
+                        if (DateTime.TryParse(element.DefaultValue, out var date))
+                        {
+                            dateValues[element.Id] = date;
+                        }
+                        else
+                        {
+                            dateValues[element.Id] = null;
+                        }
                     }
                     else
                     {
-                        formData[element.Id] = element.DefaultValue;
+                        formData[element.Id] = element.DefaultValue ?? string.Empty;
                     }
                 }
             }
+        }
+    }
+    
+    private string GetFormValue(string elementId)
+    {
+        if (formData.TryGetValue(elementId, out var value))
+        {
+            return value;
+        }
+        return string.Empty;
+    }
+    
+    private void SetFormValue(string elementId, string value)
+    {
+        formData[elementId] = value;
+    }
+    
+    private bool GetCheckboxValue(string elementId)
+    {
+        if (checkboxValues.TryGetValue(elementId, out var value))
+        {
+            return value;
+        }
+        return false;
+    }
+    
+    private void SetCheckboxValue(string elementId, object value)
+    {
+        if (value is bool boolValue)
+        {
+            checkboxValues[elementId] = boolValue;
+        }
+    }
+    
+    private string GetDateValue(string elementId)
+    {
+        if (dateValues.TryGetValue(elementId, out var date) && date.HasValue)
+        {
+            return date.Value.ToString("yyyy-MM-dd");
+        }
+        return string.Empty;
+    }
+    
+    private void SetDateValue(string elementId, object value)
+    {
+        if (value is string stringValue && DateTime.TryParse(stringValue, out var date))
+        {
+            dateValues[elementId] = date;
+        }
+        else
+        {
+            dateValues[elementId] = null;
         }
     }
     

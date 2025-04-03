@@ -79,14 +79,14 @@ namespace EFormBuilder.Services
             });
         }
 
-        public async Task<List<FormTemplate>> GetFormTemplates()
+        public async Task<List<FormTemplate>?> GetFormTemplates()
         {
             // Simulate an async operation
             await Task.Delay(10);
             return _templates;
         }
 
-        public async Task<FormTemplate> GetFormTemplate(string id)
+        public async Task<FormTemplate?> GetFormTemplate(string id)
         {
             await Task.Delay(10);
             return _templates.FirstOrDefault(t => t.Id == id);
@@ -143,7 +143,7 @@ namespace EFormBuilder.Services
             }
         }
 
-        public async Task<List<FormSubmission>> GetFormSubmissions(string templateId = null)
+        public async Task<List<FormSubmission>?> GetFormSubmissions(string templateId = null)
         {
             await Task.Delay(10);
             
@@ -155,7 +155,7 @@ namespace EFormBuilder.Services
             return _submissions.Where(s => s.FormTemplateId == templateId).ToList();
         }
 
-        public async Task<FormSubmission> GetFormSubmission(string id)
+        public async Task<FormSubmission?> GetFormSubmission(string id)
         {
             await Task.Delay(10);
             return _submissions.FirstOrDefault(s => s.Id == id);

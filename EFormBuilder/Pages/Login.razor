@@ -1,6 +1,7 @@
 @page "/login"
 @using EFormBuilder.Services
 @using System.ComponentModel.DataAnnotations
+@using System.Text.Json
 @using Microsoft.JSInterop
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
@@ -36,8 +37,15 @@
             </div>
 
             <div>
-                <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-                    Sign in
+                <button type="submit" disabled="@isLoggingIn" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    @if (isLoggingIn)
+                    {
+                        <span>Signing in...</span>
+                    }
+                    else
+                    {
+                        <span>Sign in</span>
+                    }
                 </button>
             </div>
             
@@ -53,7 +61,8 @@
 
 @code {
     private LoginModel loginModel = new LoginModel();
-    private string errorMessage;
+    private string errorMessage = string.Empty;
+    private bool isLoggingIn = false;
 
     private class LoginModel
     {
@@ -64,10 +73,25 @@
         public string Password { get; set; }
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if already logged in
+        var userJson = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "currentUser");
+        if (!string.IsNullOrEmpty(userJson))
+        {
+            // User is already logged in, redirect to home
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
     private async Task HandleValidSubmit()
     {
         try
         {
+            isLoggingIn = true;
+            errorMessage = string.Empty;
+            StateHasChanged();
+            
             var isValid = await AuthService.ValidateCredentials(loginModel.Username, loginModel.Password);
             
             if (isValid)
@@ -78,7 +102,11 @@
                 {
                     // Store user information in session/local storage
                     await JSRuntime.InvokeVoidAsync("localStorage.setItem", "currentUser", 
-                        System.Text.Json.JsonSerializer.Serialize(userInfo));
+                        JsonSerializer.Serialize(userInfo));
+                    
+                    // Store a basic auth token for API requests
+                    await JSRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", 
+                        Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{loginModel.Username}:{loginModel.Password}")));
                     
                     NavigationManager.NavigateTo("/");
                 }
@@ -95,6 +123,11 @@
         catch (Exception ex)
         {
             errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isLoggingIn = false;
+            StateHasChanged();
         }
     }
 }
