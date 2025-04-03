@@ -192,26 +192,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Function to reinitialize drag and drop after DOM updates
 window.reinitializeDragDrop = function() {
-    if (window.dragDropService) {
-        window.dragDropService.initialize();
+    try {
+        if (window.dragDropService) {
+            window.dragDropService.initialize();
+            console.log("DragDropService reinitialized");
+        } else {
+            console.warn("DragDropService not found, creating new instance");
+            window.dragDropService = new DragDropService();
+            window.dragDropService.initialize();
+        }
+    } catch (error) {
+        console.error("Error reinitializing DragDropService:", error);
     }
 };
 
-// Add event listeners for Blazor interop
 window.addEventListener = function(type, callback) {
-    document.addEventListener(type, (e) => {
-        if (callback && typeof callback === 'object' && callback.invokeMethodAsync) {
-            if (type === 'formelement:created') {
-                callback.invokeMethodAsync('HandleElementCreated', {
-                    elementType: e.detail.elementType,
-                    targetId: e.detail.targetId
-                });
-            } else if (type === 'formelement:reordered') {
-                callback.invokeMethodAsync('HandleElementReordered', {
-                    elementId: e.detail.elementId,
-                    targetId: e.detail.targetId
-                });
+    try {
+        document.addEventListener(type, (e) => {
+            if (callback && typeof callback === 'object' && callback.invokeMethodAsync) {
+                try {
+                    if (type === 'formelement:created') {
+                        callback.invokeMethodAsync('HandleElementCreated', {
+                            elementType: e.detail.elementType,
+                            targetId: e.detail.targetId
+                        });
+                    } else if (type === 'formelement:reordered') {
+                        callback.invokeMethodAsync('HandleElementReordered', {
+                            elementId: e.detail.elementId,
+                            targetId: e.detail.targetId
+                        });
+                    }
+                } catch (error) {
+                    console.error(`Error in event listener for ${type}:`, error);
+                }
             }
-        }
-    });
+        });
+    } catch (error) {
+        console.error(`Error adding event listener for ${type}:`, error);
+    }
 };
