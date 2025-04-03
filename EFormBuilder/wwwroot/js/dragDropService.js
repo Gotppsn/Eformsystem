@@ -1,3 +1,5 @@
+// Path: EFormBuilder/wwwroot/js/dragDropService.js
+
 class DragDropService {
     constructor() {
         this.draggedElement = null;
@@ -122,7 +124,9 @@ class DragDropService {
 
     handleDragEnd(event) {
         // Remove dragging class
-        this.draggedElement.classList.remove('dragging');
+        if (this.draggedElement) {
+            this.draggedElement.classList.remove('dragging');
+        }
         
         // Clear references
         this.draggedElement = null;
@@ -190,4 +194,23 @@ window.reinitializeDragDrop = function() {
     if (window.dragDropService) {
         window.dragDropService.initialize();
     }
+};
+
+// Add event listeners for Blazor interop
+window.addEventListener = function(type, callback) {
+    document.addEventListener(type, (e) => {
+        if (callback && typeof callback === 'object' && callback.invokeMethodAsync) {
+            if (type === 'formelement:created') {
+                callback.invokeMethodAsync('HandleElementCreated', {
+                    elementType: e.detail.elementType,
+                    targetId: e.detail.targetId
+                });
+            } else if (type === 'formelement:reordered') {
+                callback.invokeMethodAsync('HandleElementReordered', {
+                    elementId: e.detail.elementId,
+                    targetId: e.detail.targetId
+                });
+            }
+        }
+    });
 };

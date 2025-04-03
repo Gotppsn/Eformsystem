@@ -1,8 +1,11 @@
+// Path: EFormBuilder/tailwind.config.js
+
 module.exports = {
     content: [
       './**/*.{razor,html,cshtml}',
       './Components/**/*.{razor,html,cshtml}',
-      './Pages/**/*.{razor,html,cshtml}'
+      './Pages/**/*.{razor,html,cshtml}',
+      './Shared/**/*.{razor,html,cshtml}'
     ],
     theme: {
       extend: {

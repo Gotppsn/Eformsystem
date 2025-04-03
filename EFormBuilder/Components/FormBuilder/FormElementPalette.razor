@@ -1,0 +1,37 @@
+@inject IJSRuntime JSRuntime
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h3 class="text-lg font-semibold">Form Elements</h3>
+    </div>
+    <div class="card-body">
+        <div class="form-element-palette">
+            @foreach (var elementType in ElementTypes)
+            {
+                <div class="form-element-item" draggable="true" data-element-type="@elementType.Key">
+                    <i class="@elementType.Value.Icon mb-2"></i>
+                    <div>@elementType.Value.Name</div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private Dictionary<string, (string Name, string Icon)> ElementTypes = new Dictionary<string, (string, string)>
+    {
+        { "text", ("Text Input", "fas fa-font") },
+        { "textarea", ("Text Area", "fas fa-paragraph") },
+        { "select", ("Dropdown", "fas fa-caret-down") },
+        { "checkbox", ("Checkbox", "fas fa-check-square") },
+        { "date", ("Date", "fas fa-calendar-alt") }
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("reinitializeDragDrop");
+        }
+    }
+}

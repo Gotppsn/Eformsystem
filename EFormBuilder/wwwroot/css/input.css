@@ -62,4 +62,12 @@
   .form-element-item {
     @apply border border-gray-200 rounded-md p-2 bg-white hover:bg-gray-50 cursor-grab text-center;
   }
+  
+  .dragging {
+    @apply opacity-50;
+  }
+  
+  .drag-over {
+    @apply border-2 border-primary border-solid;
+  }
 }

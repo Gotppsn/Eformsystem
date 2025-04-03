@@ -116,6 +116,14 @@ namespace EFormBuilder.Services
             try
             {
                 var client = _httpClientFactory.CreateClient();
+                
+                // Handle relative URLs correctly
+                if (!fileUrl.StartsWith("http"))
+                {
+                    var baseUrl = _configuration["ApiSettings:BaseUrl"];
+                    fileUrl = $"{baseUrl.TrimEnd('/')}/{fileUrl.TrimStart('/')}";
+                }
+                
                 var request = new HttpRequestMessage(HttpMethod.Get, fileUrl);
                 
                 var response = await client.SendAsync(request);

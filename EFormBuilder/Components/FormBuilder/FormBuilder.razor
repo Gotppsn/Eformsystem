@@ -304,8 +304,6 @@
     
     private async Task SaveForm()
     {
-        // TODO: Add validation
-        
         // Set creation/modification timestamps and user info
         if (string.IsNullOrEmpty(FormTemplate.CreatedBy))
         {
@@ -326,7 +324,7 @@
         }
         else
         {
-            // TODO: Show error message
+            await JSRuntime.InvokeVoidAsync("alert", "Error saving form. Please try again.");
         }
     }
     

@@ -1,3 +1,5 @@
+// Path: EFormBuilder/Program.cs
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using EFormBuilder.Services;
@@ -13,6 +15,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddSingleton<IFormService, InMemoryFormService>();
+builder.Services.AddScoped<IJSRuntime, JSRuntime>();
 
 var app = builder.Build();
 
