@@ -1,0 +1,77 @@
+@using EFormBuilder.Models
+
+<div>
+    @switch (Element?.Type?.ToLower())
+    {
+        case "text":
+            <TextInputElement Element="Element" 
+                             IsEditing="IsEditing" 
+                             IsPreview="IsPreview" 
+                             OnElementUpdated="OnElementUpdated" 
+                             OnElementDeleted="OnElementDeleted"
+                             OnElementSelected="OnElementSelected" />
+            break;
+        
+        case "textarea":
+            <TextAreaElement Element="Element" 
+                            IsEditing="IsEditing" 
+                            IsPreview="IsPreview" 
+                            OnElementUpdated="OnElementUpdated" 
+                            OnElementDeleted="OnElementDeleted"
+                            OnElementSelected="OnElementSelected" />
+            break;
+        
+        case "select":
+            <SelectElement Element="Element" 
+                          IsEditing="IsEditing" 
+                          IsPreview="IsPreview" 
+                          OnElementUpdated="OnElementUpdated" 
+                          OnElementDeleted="OnElementDeleted"
+                          OnElementSelected="OnElementSelected" />
+            break;
+        
+        case "checkbox":
+            <CheckboxElement Element="Element" 
+                            IsEditing="IsEditing" 
+                            IsPreview="IsPreview" 
+                            OnElementUpdated="OnElementUpdated" 
+                            OnElementDeleted="OnElementDeleted"
+                            OnElementSelected="OnElementSelected" />
+            break;
+        
+        case "date":
+            <DateElement Element="Element" 
+                        IsEditing="IsEditing" 
+                        IsPreview="IsPreview" 
+                        OnElementUpdated="OnElementUpdated" 
+                        OnElementDeleted="OnElementDeleted"
+                        OnElementSelected="OnElementSelected" />
+            break;
+        
+        default:
+            <div class="p-4 bg-yellow-100 text-yellow-800 rounded">
+                Unknown element type: @Element?.Type
+            </div>
+            break;
+    }
+</div>
+
+@code {
+    [Parameter]
+    public FormElement Element { get; set; }
+    
+    [Parameter]
+    public bool IsEditing { get; set; } = false;
+    
+    [Parameter]
+    public bool IsPreview { get; set; } = false;
+    
+    [Parameter]
+    public EventCallback<FormElement> OnElementUpdated { get; set; }
+    
+    [Parameter]
+    public EventCallback<FormElement> OnElementDeleted { get; set; }
+    
+    [Parameter]
+    public EventCallback<FormElement> OnElementSelected { get; set; }
+}

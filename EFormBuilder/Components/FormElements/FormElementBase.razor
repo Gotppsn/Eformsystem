@@ -1,0 +1,36 @@
+@using EFormBuilder.Models
+
+@code {
+    [Parameter]
+    public FormElement Element { get; set; }
+
+    [Parameter]
+    public bool IsEditing { get; set; } = false;
+
+    [Parameter]
+    public bool IsPreview { get; set; } = false;
+
+    [Parameter]
+    public EventCallback<FormElement> OnElementUpdated { get; set; }
+
+    [Parameter]
+    public EventCallback<FormElement> OnElementDeleted { get; set; }
+
+    [Parameter]
+    public EventCallback<FormElement> OnElementSelected { get; set; }
+
+    protected async Task UpdateElement()
+    {
+        await OnElementUpdated.InvokeAsync(Element);
+    }
+
+    protected async Task DeleteElement()
+    {
+        await OnElementDeleted.InvokeAsync(Element);
+    }
+
+    protected async Task SelectElement()
+    {
+        await OnElementSelected.InvokeAsync(Element);
+    }
+}

@@ -1,0 +1,49 @@
+@page
+@model EFormBuilder.Pages.ErrorModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Error - E-Form Builder</title>
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8 text-center">
+            <div>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    Error
+                </h2>
+                <p class="mt-2 text-center text-sm text-gray-600">
+                    An error occurred while processing your request.
+                </p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="text-6xl text-red-500 mb-4">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <h3 class="text-xl font-medium text-gray-900 mb-2">Something went wrong</h3>
+                <p class="text-gray-500 mb-4">@Model.ErrorMessage</p>
+                <a href="/" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    <i class="fas fa-home mr-2"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+@functions {
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public class ErrorModel : PageModel
+    {
+        public string ErrorMessage { get; set; }
+
+        public void OnGet()
+        {
+            ErrorMessage = "An error occurred while processing your request.";
+        }
+    }
+}

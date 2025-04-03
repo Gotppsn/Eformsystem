@@ -1,0 +1,68 @@
+@inherits FormElementBase
+
+<div class="form-builder-item @(IsEditing ? "active" : "")" draggable="true" 
+     data-element-id="@Element.Id" data-element-type="textarea"
+     @onclick="SelectElement" @ondblclick="ToggleEdit">
+    @if (IsEditing)
+    {
+        <div class="p-4">
+            <div class="form-group">
+                <label class="form-label">Label</label>
+                <input type="text" class="form-input" @bind="Element.Label" @bind:event="oninput" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Placeholder</label>
+                <input type="text" class="form-input" @bind="Element.Placeholder" @bind:event="oninput" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Help Text</label>
+                <input type="text" class="form-input" @bind="Element.HelpText" @bind:event="oninput" />
+            </div>
+            <div class="form-group">
+                <div class="flex items-center">
+                    <input type="checkbox" id="required-@Element.Id" class="mr-2" 
+                           @bind="Element.Required" @bind:event="oninput" />
+                    <label for="required-@Element.Id">Required</label>
+                </div>
+            </div>
+            <div class="flex space-x-2 mt-4">
+                <button class="btn btn-primary" @onclick="SaveChanges">Save</button>
+                <button class="btn btn-secondary" @onclick="ToggleEdit">Cancel</button>
+                <button class="btn btn-danger ml-auto" @onclick="DeleteElement">Delete</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="p-4">
+            <label class="form-label">@Element.Label @(Element.Required ? "*" : "")</label>
+            <textarea class="form-input" placeholder="@Element.Placeholder" rows="3" disabled="@IsPreview"></textarea>
+            @if (!string.IsNullOrEmpty(Element.HelpText))
+            {
+                <div class="text-sm text-gray-500 mt-1">@Element.HelpText</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private bool _isEditing = false;
+
+    protected override void OnParametersSet()
+    {
+        _isEditing = IsEditing;
+        base.OnParametersSet();
+    }
+
+    private void ToggleEdit()
+    {
+        _isEditing = !_isEditing;
+        IsEditing = _isEditing;
+    }
+
+    private async Task SaveChanges()
+    {
+        await UpdateElement();
+        ToggleEdit();
+    }
+}

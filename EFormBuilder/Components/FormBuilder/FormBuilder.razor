@@ -1,0 +1,344 @@
+@page "/forms/builder"
+@page "/forms/builder/{Id}"
+@using EFormBuilder.Models
+@using EFormBuilder.Services
+@inject IFormService FormService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">
+            @(string.IsNullOrEmpty(Id) ? "Create New Form" : "Edit Form")
+        </h1>
+        <div class="flex space-x-2">
+            <button class="btn btn-secondary" @onclick="PreviewForm">
+                <i class="fas fa-eye mr-2"></i> Preview
+            </button>
+            <button class="btn btn-primary" @onclick="SaveForm">
+                <i class="fas fa-save mr-2"></i> Save
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="md:col-span-1">
+            <FormElementPalette />
+        </div>
+        
+        <div class="md:col-span-3">
+            <div class="card mb-6">
+                <div class="card-header">
+                    <h3 class="text-lg font-semibold">Form Settings</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Form Title</label>
+                        <input type="text" class="form-input" @bind="FormTemplate.Title" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-input" rows="2" @bind="FormTemplate.Description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Department</label>
+                        <select class="form-input" @bind="FormTemplate.Department">
+                            <option value="">Select Department</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Human Resources">Human Resources</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Operations">Operations</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header flex justify-between items-center">
+                    <h3 class="text-lg font-semibold">Form Elements</h3>
+                    <div class="text-sm text-gray-500">Drag elements from the palette to add to your form</div>
+                </div>
+                <div class="card-body form-builder-container" data-element-id="container">
+                    @if (FormTemplate.Elements.Count == 0)
+                    {
+                        <div class="p-8 text-center text-gray-500 border-2 border-dashed border-gray-300 rounded-lg">
+                            <p class="mb-2">Your form is empty</p>
+                            <p>Drag elements from the palette to start building your form</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var element in FormTemplate.Elements.OrderBy(e => e.Order))
+                        {
+                            <FormElementFactory Element="element"
+                                               IsEditing="SelectedElementId == element.Id"
+                                               OnElementUpdated="HandleElementUpdated"
+                                               OnElementDeleted="HandleElementDeleted"
+                                               OnElementSelected="HandleElementSelected" />
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (IsPreviewModalOpen)
+{
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h2 class="text-xl font-bold">Form Preview: @FormTemplate.Title</h2>
+                <button class="text-gray-500 hover:text-gray-700" @onclick="ClosePreviewModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <h1 class="text-2xl font-bold mb-2">@FormTemplate.Title</h1>
+                <p class="text-gray-600 mb-6">@FormTemplate.Description</p>
+                
+                @foreach (var element in FormTemplate.Elements.OrderBy(e => e.Order))
+                {
+                    <FormElementFactory Element="element" IsPreview="true" />
+                }
+            </div>
+            <div class="p-4 border-t flex justify-end">
+                <button class="btn btn-secondary" @onclick="ClosePreviewModal">Close Preview</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    
+    private FormTemplate FormTemplate { get; set; } = new FormTemplate();
+    private string SelectedElementId { get; set; }
+    private bool IsPreviewModalOpen { get; set; } = false;
+    private DotNetObjectReference<FormBuilder> objRef;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        objRef = DotNetObjectReference.Create(this);
+        
+        if (!string.IsNullOrEmpty(Id))
+        {
+            var template = await FormService.GetFormTemplate(Id);
+            if (template != null)
+            {
+                FormTemplate = template;
+            }
+        }
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("reinitializeDragDrop");
+            await JSRuntime.InvokeVoidAsync("window.addEventListener", "formelement:created", objRef);
+            await JSRuntime.InvokeVoidAsync("window.addEventListener", "formelement:reordered", objRef);
+        }
+    }
+    
+    [JSInvokable]
+    public void HandleElementCreated(ElementCreatedEventArgs args)
+    {
+        var newElement = CreateNewElement(args.ElementType);
+        
+        if (args.TargetId == "container")
+        {
+            // Add to the end
+            newElement.Order = FormTemplate.Elements.Count;
+            FormTemplate.Elements.Add(newElement);
+        }
+        else
+        {
+            // Insert after the target element
+            var targetIndex = FormTemplate.Elements.FindIndex(e => e.Id == args.TargetId);
+            if (targetIndex >= 0)
+            {
+                // Shift all elements after insertion point
+                foreach (var element in FormTemplate.Elements.Where(e => e.Order > targetIndex))
+                {
+                    element.Order++;
+                }
+                
+                newElement.Order = targetIndex + 1;
+                FormTemplate.Elements.Insert(targetIndex + 1, newElement);
+            }
+            else
+            {
+                // Fallback to adding at the end
+                newElement.Order = FormTemplate.Elements.Count;
+                FormTemplate.Elements.Add(newElement);
+            }
+        }
+        
+        StateHasChanged();
+    }
+    
+    [JSInvokable]
+    public void HandleElementReordered(ElementReorderedEventArgs args)
+    {
+        var elementToMove = FormTemplate.Elements.FirstOrDefault(e => e.Id == args.ElementId);
+        if (elementToMove == null) return;
+        
+        var currentIndex = FormTemplate.Elements.IndexOf(elementToMove);
+        FormTemplate.Elements.RemoveAt(currentIndex);
+        
+        if (args.TargetId == "container")
+        {
+            // Move to the end
+            elementToMove.Order = FormTemplate.Elements.Count;
+            FormTemplate.Elements.Add(elementToMove);
+        }
+        else
+        {
+            // Move after the target element
+            var targetIndex = FormTemplate.Elements.FindIndex(e => e.Id == args.TargetId);
+            if (targetIndex >= 0)
+            {
+                elementToMove.Order = targetIndex + 1;
+                FormTemplate.Elements.Insert(targetIndex + 1, elementToMove);
+                
+                // Reorder all elements
+                for (int i = 0; i < FormTemplate.Elements.Count; i++)
+                {
+                    FormTemplate.Elements[i].Order = i;
+                }
+            }
+            else
+            {
+                // Fallback to adding at the end
+                elementToMove.Order = FormTemplate.Elements.Count;
+                FormTemplate.Elements.Add(elementToMove);
+            }
+        }
+        
+        StateHasChanged();
+    }
+    
+    private FormElement CreateNewElement(string elementType)
+    {
+        var element = new FormElement
+        {
+            Id = Guid.NewGuid().ToString(),
+            Type = elementType
+        };
+        
+        switch (elementType.ToLower())
+        {
+            case "text":
+                element.Label = "Text Field";
+                element.Placeholder = "Enter text";
+                break;
+            
+            case "textarea":
+                element.Label = "Text Area";
+                element.Placeholder = "Enter multiple lines of text";
+                break;
+            
+            case "select":
+                element.Label = "Dropdown";
+                element.Options = new List<FormElementOption>
+                {
+                    new FormElementOption { Label = "Option 1", Value = "option1" },
+                    new FormElementOption { Label = "Option 2", Value = "option2" }
+                };
+                break;
+            
+            case "checkbox":
+                element.Label = "Checkbox";
+                break;
+            
+            case "date":
+                element.Label = "Date";
+                break;
+        }
+        
+        return element;
+    }
+    
+    private void HandleElementUpdated(FormElement element)
+    {
+        var index = FormTemplate.Elements.FindIndex(e => e.Id == element.Id);
+        if (index >= 0)
+        {
+            FormTemplate.Elements[index] = element;
+        }
+    }
+    
+    private void HandleElementDeleted(FormElement element)
+    {
+        var index = FormTemplate.Elements.FindIndex(e => e.Id == element.Id);
+        if (index >= 0)
+        {
+            FormTemplate.Elements.RemoveAt(index);
+            
+            // Reorder remaining elements
+            for (int i = 0; i < FormTemplate.Elements.Count; i++)
+            {
+                FormTemplate.Elements[i].Order = i;
+            }
+        }
+        
+        SelectedElementId = null;
+    }
+    
+    private void HandleElementSelected(FormElement element)
+    {
+        SelectedElementId = (SelectedElementId == element.Id) ? null : element.Id;
+    }
+    
+    private void PreviewForm()
+    {
+        IsPreviewModalOpen = true;
+    }
+    
+    private void ClosePreviewModal()
+    {
+        IsPreviewModalOpen = false;
+    }
+    
+    private async Task SaveForm()
+    {
+        // TODO: Add validation
+        
+        // Set creation/modification timestamps and user info
+        if (string.IsNullOrEmpty(FormTemplate.CreatedBy))
+        {
+            FormTemplate.CreatedBy = "31debf3e-dffc-4600-aecf-8f7e2ce85000"; // Hardcoded for demo purposes
+            FormTemplate.CreatedDate = DateTime.Now;
+        }
+        else
+        {
+            FormTemplate.ModifiedDate = DateTime.Now;
+        }
+        
+        // Save the form
+        var result = await FormService.SaveFormTemplate(FormTemplate);
+        
+        if (result)
+        {
+            NavigationManager.NavigateTo("/forms");
+        }
+        else
+        {
+            // TODO: Show error message
+        }
+    }
+    
+    public class ElementCreatedEventArgs
+    {
+        public string ElementType { get; set; }
+        public string TargetId { get; set; }
+    }
+    
+    public class ElementReorderedEventArgs
+    {
+        public string ElementId { get; set; }
+        public string TargetId { get; set; }
+    }
+}

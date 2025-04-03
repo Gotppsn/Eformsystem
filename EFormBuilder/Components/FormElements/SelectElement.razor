@@ -1,0 +1,121 @@
+@inherits FormElementBase
+
+<div class="form-builder-item @(IsEditing ? "active" : "")" draggable="true" 
+     data-element-id="@Element.Id" data-element-type="select"
+     @onclick="SelectElement" @ondblclick="ToggleEdit">
+    @if (IsEditing)
+    {
+        <div class="p-4">
+            <div class="form-group">
+                <label class="form-label">Label</label>
+                <input type="text" class="form-input" @bind="Element.Label" @bind:event="oninput" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Help Text</label>
+                <input type="text" class="form-input" @bind="Element.HelpText" @bind:event="oninput" />
+            </div>
+            <div class="form-group">
+                <div class="flex items-center">
+                    <input type="checkbox" id="required-@Element.Id" class="mr-2" 
+                           @bind="Element.Required" @bind:event="oninput" />
+                    <label for="required-@Element.Id">Required</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Options</label>
+                @foreach (var option in Element.Options)
+                {
+                    <div class="flex mb-2">
+                        <input type="text" class="form-input mr-2" placeholder="Label" 
+                               value="@option.Label" @onchange="(e) => UpdateOptionLabel(option, e.Value.ToString())" />
+                        <input type="text" class="form-input mr-2" placeholder="Value" 
+                               value="@option.Value" @onchange="(e) => UpdateOptionValue(option, e.Value.ToString())" />
+                        <button class="btn btn-danger" @onclick="() => RemoveOption(option)">
+                            <span class="text-sm">✕</span>
+                        </button>
+                    </div>
+                }
+                <button class="btn btn-secondary mt-2" @onclick="AddOption">Add Option</button>
+            </div>
+            
+            <div class="flex space-x-2 mt-4">
+                <button class="btn btn-primary" @onclick="SaveChanges">Save</button>
+                <button class="btn btn-secondary" @onclick="ToggleEdit">Cancel</button>
+                <button class="btn btn-danger ml-auto" @onclick="DeleteElement">Delete</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="p-4">
+            <label class="form-label">@Element.Label @(Element.Required ? "*" : "")</label>
+            <select class="form-input" disabled="@IsPreview">
+                <option value="">Select an option</option>
+                @foreach (var option in Element.Options)
+                {
+                    <option value="@option.Value">@option.Label</option>
+                }
+            </select>
+            @if (!string.IsNullOrEmpty(Element.HelpText))
+            {
+                <div class="text-sm text-gray-500 mt-1">@Element.HelpText</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private bool _isEditing = false;
+
+    protected override void OnParametersSet()
+    {
+        _isEditing = IsEditing;
+        
+        // Ensure we always have options
+        if (Element.Options == null)
+        {
+            Element.Options = new List<FormElementOption>();
+        }
+        
+        base.OnParametersSet();
+    }
+
+    private void ToggleEdit()
+    {
+        _isEditing = !_isEditing;
+        IsEditing = _isEditing;
+    }
+
+    private async Task SaveChanges()
+    {
+        await UpdateElement();
+        ToggleEdit();
+    }
+    
+    private void AddOption()
+    {
+        Element.Options.Add(new FormElementOption 
+        { 
+            Label = "Option " + (Element.Options.Count + 1),
+            Value = "option" + (Element.Options.Count + 1)
+        });
+    }
+    
+    private void RemoveOption(FormElementOption option)
+    {
+        Element.Options.Remove(option);
+    }
+    
+    private void UpdateOptionLabel(FormElementOption option, string newLabel)
+    {
+        var index = Element.Options.IndexOf(option);
+        Element.Options[index].Label = newLabel;
+    }
+    
+    private void UpdateOptionValue(FormElementOption option, string newValue)
+    {
+        var index = Element.Options.IndexOf(option);
+        Element.Options[index].Value = newValue;
+    }
+}

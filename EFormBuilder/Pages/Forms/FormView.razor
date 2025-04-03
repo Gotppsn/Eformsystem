@@ -1,0 +1,210 @@
+@page "/forms/{Id}"
+@using EFormBuilder.Models
+@using EFormBuilder.Services
+@inject IFormService FormService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<div class="container mx-auto px-4 py-6">
+    @if (FormTemplate == null)
+    {
+        <div class="text-center p-6">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="p-6 border-b">
+                <div class="flex justify-between items-center mb-4">
+                    <h1 class="text-2xl font-bold">@FormTemplate.Title</h1>
+                    <button class="btn btn-primary" @onclick="SubmitForm">
+                        <i class="fas fa-paper-plane mr-2"></i> Submit
+                    </button>
+                </div>
+                <p class="text-gray-600">@FormTemplate.Description</p>
+            </div>
+            
+            <div class="p-6">
+                <EditForm Model="@formData" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    
+                    @foreach (var element in FormTemplate.Elements.OrderBy(e => e.Order))
+                    {
+                        <div class="mb-4 p-4 border border-gray-200 rounded-md">
+                            @switch (element.Type.ToLower())
+                            {
+                                case "text":
+                                    <div class="form-group">
+                                        <label class="form-label">@element.Label @(element.Required ? "*" : "")</label>
+                                        <InputText class="form-input" 
+                                                 placeholder="@element.Placeholder"
+                                                 @bind-Value="formData[element.Id]"
+                                                 required="@element.Required" />
+                                        @if (!string.IsNullOrEmpty(element.HelpText))
+                                        {
+                                            <div class="text-sm text-gray-500 mt-1">@element.HelpText</div>
+                                        }
+                                    </div>
+                                    break;
+                                
+                                case "textarea":
+                                    <div class="form-group">
+                                        <label class="form-label">@element.Label @(element.Required ? "*" : "")</label>
+                                        <InputTextArea class="form-input" 
+                                                     placeholder="@element.Placeholder"
+                                                     @bind-Value="formData[element.Id]"
+                                                     required="@element.Required"
+                                                     rows="3" />
+                                        @if (!string.IsNullOrEmpty(element.HelpText))
+                                        {
+                                            <div class="text-sm text-gray-500 mt-1">@element.HelpText</div>
+                                        }
+                                    </div>
+                                    break;
+                                
+                                case "select":
+                                    <div class="form-group">
+                                        <label class="form-label">@element.Label @(element.Required ? "*" : "")</label>
+                                        <InputSelect class="form-input" 
+                                                   @bind-Value="formData[element.Id]"
+                                                   required="@element.Required">
+                                            <option value="">Select an option</option>
+                                            @foreach (var option in element.Options)
+                                            {
+                                                <option value="@option.Value">@option.Label</option>
+                                            }
+                                        </InputSelect>
+                                        @if (!string.IsNullOrEmpty(element.HelpText))
+                                        {
+                                            <div class="text-sm text-gray-500 mt-1">@element.HelpText</div>
+                                        }
+                                    </div>
+                                    break;
+                                
+                                case "checkbox":
+                                    <div class="form-group">
+                                        <div class="flex items-center">
+                                            <InputCheckbox id="check-@element.Id" 
+                                                         @bind-Value="checkboxValues[element.Id]"
+                                                         class="mr-2" />
+                                            <label for="check-@element.Id" class="cursor-pointer">
+                                                @element.Label @(element.Required ? "*" : "")
+                                            </label>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(element.HelpText))
+                                        {
+                                            <div class="text-sm text-gray-500 mt-1">@element.HelpText</div>
+                                        }
+                                    </div>
+                                    break;
+                                
+                                case "date":
+                                    <div class="form-group">
+                                        <label class="form-label">@element.Label @(element.Required ? "*" : "")</label>
+                                        <InputDate class="form-input" 
+                                                 @bind-Value="dateValues[element.Id]"
+                                                 required="@element.Required" />
+                                        @if (!string.IsNullOrEmpty(element.HelpText))
+                                        {
+                                            <div class="text-sm text-gray-500 mt-1">@element.HelpText</div>
+                                        }
+                                    </div>
+                                    break;
+                            }
+                        </div>
+                    }
+                    
+                    <div class="flex justify-end mt-6">
+                        <a href="/forms" class="btn btn-secondary mr-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane mr-2"></i> Submit
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    
+    private FormTemplate FormTemplate { get; set; }
+    private Dictionary<string, string> formData = new Dictionary<string, string>();
+    private Dictionary<string, bool> checkboxValues = new Dictionary<string, bool>();
+    private Dictionary<string, DateTime?> dateValues = new Dictionary<string, DateTime?>();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(Id))
+        {
+            FormTemplate = await FormService.GetFormTemplate(Id);
+            
+            if (FormTemplate != null)
+            {
+                // Initialize form data
+                foreach (var element in FormTemplate.Elements)
+                {
+                    if (element.Type.ToLower() == "checkbox")
+                    {
+                        checkboxValues[element.Id] = element.DefaultValue == "true";
+                    }
+                    else if (element.Type.ToLower() == "date")
+                    {
+                        dateValues[element.Id] = string.IsNullOrEmpty(element.DefaultValue) ? 
+                            null : DateTime.Parse(element.DefaultValue);
+                    }
+                    else
+                    {
+                        formData[element.Id] = element.DefaultValue;
+                    }
+                }
+            }
+        }
+    }
+    
+    private async Task HandleValidSubmit()
+    {
+        // Merge all form data into a single dictionary for submission
+        Dictionary<string, string> submissionData = new Dictionary<string, string>(formData);
+        
+        foreach (var checkbox in checkboxValues)
+        {
+            submissionData[checkbox.Key] = checkbox.Value.ToString();
+        }
+        
+        foreach (var date in dateValues)
+        {
+            submissionData[date.Key] = date.Value?.ToString("yyyy-MM-dd") ?? "";
+        }
+        
+        var submission = new FormSubmission
+        {
+            FormTemplateId = FormTemplate.Id,
+            SubmittedBy = "31debf3e-dffc-4600-aecf-8f7e2ce85000", // Hardcoded for demo
+            FormData = submissionData
+        };
+        
+        var result = await FormService.SaveFormSubmission(submission);
+        
+        if (result)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Form submitted successfully!");
+            NavigationManager.NavigateTo("/forms");
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "There was an error submitting the form. Please try again.");
+        }
+    }
+    
+    private void SubmitForm()
+    {
+        // This will trigger form validation and submission
+        JSRuntime.InvokeVoidAsync("document.querySelector('form').requestSubmit()");
+    }
+}

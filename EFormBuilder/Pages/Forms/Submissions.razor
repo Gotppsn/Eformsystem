@@ -1,0 +1,181 @@
+@page "/forms/submissions"
+@page "/forms/submissions/{FormId}"
+@using EFormBuilder.Models
+@using EFormBuilder.Services
+@inject IFormService FormService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">
+            @(string.IsNullOrEmpty(FormId) ? "All Form Submissions" : $"Submissions for {FormTemplate?.Title}")
+        </h1>
+        
+        @if (string.IsNullOrEmpty(FormId))
+        {
+            <a href="/forms" class="btn btn-primary">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Forms
+            </a>
+        }
+        else
+        {
+            <a href="/forms" class="btn btn-primary">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Forms
+            </a>
+        }
+    </div>
+    
+    @if (Submissions == null)
+    {
+        <div class="text-center p-6">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (Submissions.Count == 0)
+    {
+        <div class="bg-white rounded-lg shadow-md p-8 text-center">
+            <div class="mb-4 text-5xl text-gray-400">
+                <i class="fas fa-inbox"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">No Submissions Found</h3>
+            <p class="text-gray-600 mb-4">There are no submissions for this form yet.</p>
+            @if (!string.IsNullOrEmpty(FormId))
+            {
+                <a href="/forms/@FormId" class="btn btn-primary">
+                    <i class="fas fa-paper-plane mr-2"></i> Submit Form
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Submission ID
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Form
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Submitted By
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Submission Date
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach (var submission in Submissions)
+                        {
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    @submission.Id.Substring(0, 8)
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    @GetFormTitleById(submission.FormTemplateId)
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    @submission.SubmittedBy
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    @submission.SubmissionDate.ToString("MMM dd, yyyy HH:mm")
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="@GetStatusClass(submission.Status) px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+                                        @submission.Status.ToString()
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="/forms/submissions/view/@submission.Id" class="text-primary hover:text-primary-dark mr-3">
+                                        View
+                                    </a>
+                                    @if (submission.Status == SubmissionStatus.Submitted)
+                                    {
+                                        <button @onclick="() => UpdateStatus(submission.Id, SubmissionStatus.Approved)" class="text-success hover:text-green-700 mr-3">
+                                            Approve
+                                        </button>
+                                        <button @onclick="() => UpdateStatus(submission.Id, SubmissionStatus.Rejected)" class="text-danger hover:text-red-700">
+                                            Reject
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string FormId { get; set; }
+    
+    private List<FormSubmission> Submissions { get; set; }
+    private FormTemplate FormTemplate { get; set; }
+    private List<FormTemplate> AllFormTemplates { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        AllFormTemplates = await FormService.GetFormTemplates();
+        
+        if (!string.IsNullOrEmpty(FormId))
+        {
+            FormTemplate = await FormService.GetFormTemplate(FormId);
+            Submissions = await FormService.GetFormSubmissions(FormId);
+        }
+        else
+        {
+            Submissions = await FormService.GetFormSubmissions();
+        }
+    }
+    
+    private string GetFormTitleById(string formId)
+    {
+        var template = AllFormTemplates.FirstOrDefault(t => t.Id == formId);
+        return template?.Title ?? "Unknown Form";
+    }
+    
+    private string GetStatusClass(SubmissionStatus status)
+    {
+        return status switch
+        {
+            SubmissionStatus.Draft => "bg-gray-100 text-gray-800",
+            SubmissionStatus.Submitted => "bg-blue-100 text-blue-800",
+            SubmissionStatus.InReview => "bg-yellow-100 text-yellow-800",
+            SubmissionStatus.Approved => "bg-green-100 text-green-800",
+            SubmissionStatus.Rejected => "bg-red-100 text-red-800",
+            SubmissionStatus.Cancelled => "bg-gray-100 text-gray-800",
+            _ => "bg-gray-100 text-gray-800"
+        };
+    }
+    
+    private async Task UpdateStatus(string submissionId, SubmissionStatus newStatus)
+    {
+        await FormService.UpdateSubmissionStatus(submissionId, newStatus);
+        
+        // Refresh submissions
+        if (!string.IsNullOrEmpty(FormId))
+        {
+            Submissions = await FormService.GetFormSubmissions(FormId);
+        }
+        else
+        {
+            Submissions = await FormService.GetFormSubmissions();
+        }
+    }
+}

@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded font-semibold transition-colors duration-150 ease-in-out;
+  }
+  
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-dark;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary text-white hover:bg-gray-700;
+  }
+  
+  .btn-success {
+    @apply bg-success text-white hover:bg-green-700;
+  }
+  
+  .btn-danger {
+    @apply bg-danger text-white hover:bg-red-700;
+  }
+  
+  .form-input {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+  }
+  
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+  
+  .form-group {
+    @apply mb-4;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-md overflow-hidden;
+  }
+  
+  .card-header {
+    @apply px-6 py-4 bg-gray-50 border-b border-gray-200;
+  }
+  
+  .card-body {
+    @apply p-6;
+  }
+  
+  .form-builder-item {
+    @apply border-2 border-dashed border-gray-300 p-4 mb-2 rounded-md cursor-move hover:border-primary transition-colors duration-150;
+  }
+  
+  .form-builder-item.active {
+    @apply border-2 border-primary bg-blue-50;
+  }
+  
+  .form-element-palette {
+    @apply grid grid-cols-2 gap-2;
+  }
+  
+  .form-element-item {
+    @apply border border-gray-200 rounded-md p-2 bg-white hover:bg-gray-50 cursor-grab text-center;
+  }
+}

@@ -1,0 +1,284 @@
+@page "/reports"
+@using EFormBuilder.Models
+@using EFormBuilder.Services
+@inject IFormService FormService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Form Reports</h1>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="col-span-1">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-4 bg-gray-50 border-b">
+                    <h3 class="font-semibold">Filter Options</h3>
+                </div>
+                <div class="p-4">
+                    <div class="form-group">
+                        <label class="form-label">Form Template</label>
+                        <select class="form-input" @bind="selectedFormId" @bind:event="oninput" @onchange="FilterReportData">
+                            <option value="">All Forms</option>
+                            @if (FormTemplates != null)
+                            {
+                                @foreach (var template in FormTemplates)
+                                {
+                                    <option value="@template.Id">@template.Title</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-input" @bind="selectedStatus" @bind:event="oninput" @onchange="FilterReportData">
+                            <option value="">All Statuses</option>
+                            @foreach (var status in Enum.GetValues(typeof(SubmissionStatus)))
+                            {
+                                <option value="@status">@status</option>
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Date Range</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="form-label text-xs">From</label>
+                                <input type="date" class="form-input" @bind="startDate" @bind:event="oninput" @onchange="FilterReportData" />
+                            </div>
+                            <div>
+                                <label class="form-label text-xs">To</label>
+                                <input type="date" class="form-input" @bind="endDate" @bind:event="oninput" @onchange="FilterReportData" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary w-full mt-4" @onclick="FilterReportData">
+                        <i class="fas fa-filter mr-2"></i> Apply Filters
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mt-6">
+                <div class="p-4 bg-gray-50 border-b">
+                    <h3 class="font-semibold">Report Actions</h3>
+                </div>
+                <div class="p-4">
+                    <button class="btn btn-secondary w-full mb-2" @onclick="ExportToCsv">
+                        <i class="fas fa-file-csv mr-2"></i> Export to CSV
+                    </button>
+                    <button class="btn btn-secondary w-full" @onclick="PrintReport">
+                        <i class="fas fa-print mr-2"></i> Print Report
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-span-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="p-4 bg-gray-50 border-b">
+                        <h3 class="font-semibold">Submissions by Status</h3>
+                    </div>
+                    <div class="p-4 flex items-center justify-center" style="height: 200px;">
+                        <div class="w-full h-full" id="statusChart"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="p-4 bg-gray-50 border-b">
+                        <h3 class="font-semibold">Submissions by Department</h3>
+                    </div>
+                    <div class="p-4 flex items-center justify-center" style="height: 200px;">
+                        <div class="w-full h-full" id="departmentChart"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-4 bg-gray-50 border-b">
+                    <h3 class="font-semibold">Submissions Data</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Form
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Submitted By
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Department
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Submission Date
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @if (FilteredSubmissions != null && FilteredSubmissions.Any())
+                            {
+                                @foreach (var submission in FilteredSubmissions)
+                                {
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            @GetFormTitleById(submission.FormTemplateId)
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            @submission.SubmittedBy
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            @GetFormDepartmentById(submission.FormTemplateId)
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            @submission.SubmissionDate.ToString("MMM dd, yyyy")
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="@GetStatusClass(submission.Status) px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+                                                @submission.Status.ToString()
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <a href="/forms/submissions/view/@submission.Id" class="text-primary hover:text-primary-dark">
+                                                View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                                        No submissions found matching the current filters.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<FormTemplate> FormTemplates { get; set; }
+    private List<FormSubmission> AllSubmissions { get; set; }
+    private List<FormSubmission> FilteredSubmissions { get; set; }
+    
+    private string selectedFormId = "";
+    private string selectedStatus = "";
+    private DateTime? startDate;
+    private DateTime? endDate = DateTime.Today;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        FormTemplates = await FormService.GetFormTemplates();
+        AllSubmissions = await FormService.GetFormSubmissions();
+        
+        // Set initial filtered submissions
+        FilteredSubmissions = AllSubmissions;
+        
+        // Set default start date to 30 days ago
+        startDate = DateTime.Today.AddDays(-30);
+        
+        await FilterReportData();
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await RenderCharts();
+        }
+    }
+    
+    private async Task FilterReportData()
+    {
+        FilteredSubmissions = AllSubmissions;
+        
+        // Apply form filter
+        if (!string.IsNullOrEmpty(selectedFormId))
+        {
+            FilteredSubmissions = FilteredSubmissions.Where(s => s.FormTemplateId == selectedFormId).ToList();
+        }
+        
+        // Apply status filter
+        if (!string.IsNullOrEmpty(selectedStatus) && Enum.TryParse<SubmissionStatus>(selectedStatus, out var statusEnum))
+        {
+            FilteredSubmissions = FilteredSubmissions.Where(s => s.Status == statusEnum).ToList();
+        }
+        
+        // Apply date filters
+        if (startDate.HasValue)
+        {
+            FilteredSubmissions = FilteredSubmissions.Where(s => s.SubmissionDate.Date >= startDate.Value.Date).ToList();
+        }
+        
+        if (endDate.HasValue)
+        {
+            FilteredSubmissions = FilteredSubmissions.Where(s => s.SubmissionDate.Date <= endDate.Value.Date).ToList();
+        }
+        
+        await RenderCharts();
+    }
+    
+    private async Task RenderCharts()
+    {
+        // This is a placeholder for chart rendering logic
+        // In a real app, you would use a JavaScript interop to render charts
+        // with libraries like Chart.js, ApexCharts, etc.
+        await Task.CompletedTask;
+    }
+    
+    private async Task ExportToCsv()
+    {
+        // This would be implemented with JavaScript interop
+        // to generate and download a CSV file
+        await JSRuntime.InvokeVoidAsync("alert", "Export to CSV functionality would be implemented here");
+    }
+    
+    private async Task PrintReport()
+    {
+        // Use JavaScript interop to trigger browser print
+        await JSRuntime.InvokeVoidAsync("window.print");
+    }
+    
+    private string GetFormTitleById(string formId)
+    {
+        var template = FormTemplates.FirstOrDefault(t => t.Id == formId);
+        return template?.Title ?? "Unknown Form";
+    }
+    
+    private string GetFormDepartmentById(string formId)
+    {
+        var template = FormTemplates.FirstOrDefault(t => t.Id == formId);
+        return template?.Department ?? "Unknown Department";
+    }
+    
+    private string GetStatusClass(SubmissionStatus status)
+    {
+        return status switch
+        {
+            SubmissionStatus.Draft => "bg-gray-100 text-gray-800",
+            SubmissionStatus.Submitted => "bg-blue-100 text-blue-800",
+            SubmissionStatus.InReview => "bg-yellow-100 text-yellow-800",
+            SubmissionStatus.Approved => "bg-green-100 text-green-800",
+            SubmissionStatus.Rejected => "bg-red-100 text-red-800",
+            SubmissionStatus.Cancelled => "bg-gray-100 text-gray-800",
+            _ => "bg-gray-100 text-gray-800"
+        };
+    }
+}

@@ -1,0 +1,117 @@
+is_global = true
+build_property.TargetFramework = net9.0
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = EFormBuilder
+build_property.RootNamespace = EFormBuilder
+build_property.ProjectDir = C:\Users\panupol\Desktop\EFormsystem\Eformsystem\EFormBuilder\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 9.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\panupol\Desktop\EFormsystem\Eformsystem\EFormBuilder
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Components/FormBuilder/FormBuilder.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xGb3JtQnVpbGRlclxGb3JtQnVpbGRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Components/FormBuilder/FormElementFactory.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xGb3JtQnVpbGRlclxGb3JtRWxlbWVudEZhY3RvcnkucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Components/FormBuilder/FormElementPalette.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xGb3JtQnVpbGRlclxGb3JtRWxlbWVudFBhbGV0dGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Components/FormElements/CheckboxElement.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xGb3JtRWxlbWVudHNcQ2hlY2tib3hFbGVtZW50LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Components/FormElements/DateElement.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xGb3JtRWxlbWVudHNcRGF0ZUVsZW1lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Components/FormElements/FormElementBase.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xGb3JtRWxlbWVudHNcRm9ybUVsZW1lbnRCYXNlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Components/FormElements/SelectElement.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xGb3JtRWxlbWVudHNcU2VsZWN0RWxlbWVudC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Components/FormElements/TextAreaElement.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xGb3JtRWxlbWVudHNcVGV4dEFyZWFFbGVtZW50LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Components/FormElements/TextInputElement.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xGb3JtRWxlbWVudHNcVGV4dElucHV0RWxlbWVudC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Pages/Forms/FormView.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRm9ybXNcRm9ybVZpZXcucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Pages/Forms/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRm9ybXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Pages/Forms/Submissions.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRm9ybXNcU3VibWlzc2lvbnMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Pages/Forms/SubmissionView.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRm9ybXNcU3VibWlzc2lvblZpZXcucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Pages/Management/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFuYWdlbWVudFxJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Pages/Reports/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVwb3J0c1xJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Pages/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Pages/_Host.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/panupol/Desktop/EFormsystem/Eformsystem/EFormBuilder/Pages/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0xheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
