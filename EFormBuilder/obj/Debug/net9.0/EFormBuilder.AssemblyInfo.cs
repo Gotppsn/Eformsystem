@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EFormBuilder")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b4bbedb7c6ce05e0529289db997ae898e7eaf986")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+446007357cfd9fde6f85903649881fff7c7df3d9")]
 [assembly: System.Reflection.AssemblyProductAttribute("EFormBuilder")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EFormBuilder")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

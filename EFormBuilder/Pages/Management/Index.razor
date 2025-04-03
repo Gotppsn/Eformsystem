@@ -1,3 +1,4 @@
+// Path: EFormBuilder/Pages/Management/Index.razor
 @page "/management"
 @using EFormBuilder.Models
 @using EFormBuilder.Services
@@ -18,14 +19,12 @@
                 </div>
                 <div class="p-4">
                     <ul class="divide-y divide-gray-200">
-                        <li class="py-2 hover:bg-gray-50 cursor-pointer @(selectedDepartment == "" ? "text-primary font-medium" : "")" 
-                            @onclick="() => SelectDepartment("")">
+                        <li class="py-2 hover:bg-gray-50 cursor-pointer @(selectedDepartment == "" ? "text-primary font-medium" : "")" @onclick="@(() => SelectDepartment(""))">
                             All Departments
                         </li>
                         @foreach (var department in GetUniqueDepartments())
                         {
-                            <li class="py-2 hover:bg-gray-50 cursor-pointer @(selectedDepartment == department ? "text-primary font-medium" : "")" 
-                                @onclick="() => SelectDepartment(department)">
+                            <li class="py-2 hover:bg-gray-50 cursor-pointer @(selectedDepartment == department ? "text-primary font-medium" : "")" @onclick="() => SelectDepartment(department)">
                                 @department
                             </li>
                         }

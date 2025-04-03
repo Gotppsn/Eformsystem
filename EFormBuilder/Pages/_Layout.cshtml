@@ -8,11 +8,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    @{
-        var baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.PathBase}";
-    }
-    <base href="@baseUrl/" />
-    <link href="@baseUrl/css/site.css" rel="stylesheet" />
+    <base href="~/" />
+    <link href="css/site.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
@@ -30,11 +27,8 @@
         <a href="" class="btn btn-sm btn-outline-light">Dismiss</a>
     </div>
 
-    <script src="@baseUrl/_framework/blazor.server.js"></script>
-    <script src="@baseUrl/js/apiUtils.js"></script>
-    <script src="@baseUrl/js/dragDropService.js"></script>
-    <script>
-        window.applicationBaseUrl = '@baseUrl';
-    </script>
+    <script src="_framework/blazor.server.js"></script>
+    <script src="js/apiUtils.js"></script>
+    <script src="js/dragDropService.js"></script>
 </body>
 </html>

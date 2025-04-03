@@ -1,0 +1,40 @@
+﻿<Project>
+  <ItemGroup>
+    <StaticWebAssetEndpoint Include="_content/EFormBuilder/css/input.css">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\input.css'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-Mx0jRcn4U8mF/WldgV1ZRfiiKHMwSffnf2eS8TNgb\u002Bg="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1612"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022Mx0jRcn4U8mF/WldgV1ZRfiiKHMwSffnf2eS8TNgb\u002Bg=\u0022"},{"Name":"Last-Modified","Value":"Thu, 03 Apr 2025 04:07:58 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/EFormBuilder/css/input.do64wu51p1.css">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\input.css'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"do64wu51p1"},{"Name":"integrity","Value":"sha256-Mx0jRcn4U8mF/WldgV1ZRfiiKHMwSffnf2eS8TNgb\u002Bg="},{"Name":"label","Value":"_content/EFormBuilder/css/input.css"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1612"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022Mx0jRcn4U8mF/WldgV1ZRfiiKHMwSffnf2eS8TNgb\u002Bg=\u0022"},{"Name":"Last-Modified","Value":"Thu, 03 Apr 2025 04:07:58 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/EFormBuilder/js/apiUtils.js">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\apiUtils.js'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-IfCZYgF8inTRhdHTmOFoyeqEYe29Omaj8RzDFVZwNU0="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"536"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\u0022IfCZYgF8inTRhdHTmOFoyeqEYe29Omaj8RzDFVZwNU0=\u0022"},{"Name":"Last-Modified","Value":"Thu, 03 Apr 2025 04:48:43 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/EFormBuilder/js/apiUtils.nmbce7o2mg.js">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\apiUtils.js'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"nmbce7o2mg"},{"Name":"integrity","Value":"sha256-IfCZYgF8inTRhdHTmOFoyeqEYe29Omaj8RzDFVZwNU0="},{"Name":"label","Value":"_content/EFormBuilder/js/apiUtils.js"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"536"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\u0022IfCZYgF8inTRhdHTmOFoyeqEYe29Omaj8RzDFVZwNU0=\u0022"},{"Name":"Last-Modified","Value":"Thu, 03 Apr 2025 04:48:43 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/EFormBuilder/js/dragDropService.erre2miigh.js">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\dragDropService.js'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"erre2miigh"},{"Name":"integrity","Value":"sha256-Cn7bklDv4VdJu4mDmS0gQSn7YUFUvOfX4ZwpdH3n5Og="},{"Name":"label","Value":"_content/EFormBuilder/js/dragDropService.js"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"8334"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\u0022Cn7bklDv4VdJu4mDmS0gQSn7YUFUvOfX4ZwpdH3n5Og=\u0022"},{"Name":"Last-Modified","Value":"Thu, 03 Apr 2025 04:19:54 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/EFormBuilder/js/dragDropService.js">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\dragDropService.js'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-Cn7bklDv4VdJu4mDmS0gQSn7YUFUvOfX4ZwpdH3n5Og="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"8334"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\u0022Cn7bklDv4VdJu4mDmS0gQSn7YUFUvOfX4ZwpdH3n5Og=\u0022"},{"Name":"Last-Modified","Value":"Thu, 03 Apr 2025 04:19:54 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+  </ItemGroup>
+</Project>
