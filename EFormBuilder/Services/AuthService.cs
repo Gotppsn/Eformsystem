@@ -1,3 +1,5 @@
+// Path: EFormBuilder/Services/AuthService.cs
+
 using System.DirectoryServices.AccountManagement;
 using Microsoft.Extensions.Options;
 using EFormBuilder.Models;
@@ -50,7 +52,15 @@ namespace EFormBuilder.Services
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                var apiUrl = $"{_configuration["ApiSettings:ApiUserUrl"]}?userCode={userCode}";
+                var apiUrl = _configuration["ApiSettings:ApiUserUrl"];
+                
+                if (string.IsNullOrEmpty(apiUrl))
+                {
+                    throw new InvalidOperationException("API User URL is not configured in appsettings.json");
+                }
+                
+                // Ensure URL is properly formed
+                apiUrl = apiUrl.TrimEnd('/') + "?userCode=" + userCode;
                 
                 var response = await client.GetAsync(apiUrl);
                 response.EnsureSuccessStatusCode();

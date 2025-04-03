@@ -7,6 +7,7 @@ class DragDropService {
         this.dragSourceElement = null;
         this.dropTargetElement = null;
         this.isDraggingFromPalette = false;
+        this.baseUrl = document.querySelector('base')?.getAttribute('href') || '/';
     }
 
     initialize() {

@@ -15,7 +15,13 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddSingleton<IFormService, InMemoryFormService>();
-builder.Services.AddScoped<IJSRuntime, JSRuntime>();
+builder.Services.AddScoped<IBaseUrlService, BaseUrlService>();
+
+// Configure base path for IIS deployment
+builder.Services.Configure<RouteOptions>(options =>
+{
+    options.LowercaseUrls = true;
+});
 
 var app = builder.Build();
 

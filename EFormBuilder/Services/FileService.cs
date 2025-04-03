@@ -1,3 +1,5 @@
+// Path: EFormBuilder/Services/FileService.cs
+
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -45,7 +47,8 @@ namespace EFormBuilder.Services
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                var request = new HttpRequestMessage(HttpMethod.Post, $"{GetApiUrl()}api/Service_File/Upload_File");
+                var apiEndpoint = $"{GetApiUrl().TrimEnd('/')}/api/Service_File/Upload_File";
+                var request = new HttpRequestMessage(HttpMethod.Post, apiEndpoint);
                 
                 var fileData = new ClsServiceFile
                 {
@@ -84,7 +87,8 @@ namespace EFormBuilder.Services
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                var request = new HttpRequestMessage(HttpMethod.Post, $"{GetApiUrl()}api/Service_File/Delete_File");
+                var apiEndpoint = $"{GetApiUrl().TrimEnd('/')}/api/Service_File/Delete_File";
+                var request = new HttpRequestMessage(HttpMethod.Post, apiEndpoint);
 
                 fileUrl = HttpUtility.UrlEncode(fileUrl);
                 request.Headers.Add("Token", GetToken());
