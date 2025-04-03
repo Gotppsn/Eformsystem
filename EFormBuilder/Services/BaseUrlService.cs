@@ -12,15 +12,27 @@ namespace EFormBuilder.Services
     public class BaseUrlService : IBaseUrlService
     {
         private readonly NavigationManager _navigationManager;
+        private readonly IWebHostEnvironment _environment;
 
-        public BaseUrlService(NavigationManager navigationManager)
+        public BaseUrlService(NavigationManager navigationManager, IWebHostEnvironment environment)
         {
             _navigationManager = navigationManager;
+            _environment = environment;
         }
 
         public string GetBaseUrl()
         {
-            return _navigationManager.BaseUri;
+            // Get base URL from NavigationManager
+            var uri = new Uri(_navigationManager.BaseUri);
+            var baseUrl = $"{uri.Scheme}://{uri.Authority}";
+            
+            // Add application path if not running at root
+            if (!string.IsNullOrEmpty(uri.AbsolutePath) && uri.AbsolutePath != "/")
+            {
+                baseUrl += uri.AbsolutePath.TrimEnd('/');
+            }
+            
+            return baseUrl;
         }
 
         public string CombineUrl(string baseUrl, string relativeUrl)

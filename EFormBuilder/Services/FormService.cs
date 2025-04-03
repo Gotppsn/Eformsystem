@@ -1,3 +1,4 @@
+// Path: EFormBuilder/Services/FormService.cs
 using System.Text.Json;
 using EFormBuilder.Models;
 
@@ -6,11 +7,11 @@ namespace EFormBuilder.Services
     public interface IFormService
     {
         Task<List<FormTemplate>> GetFormTemplates();
-        Task<FormTemplate> GetFormTemplate(string id);
+        Task<FormTemplate?> GetFormTemplate(string id);
         Task<bool> SaveFormTemplate(FormTemplate template);
         Task<bool> DeleteFormTemplate(string id);
-        Task<List<FormSubmission>> GetFormSubmissions(string templateId = null);
-        Task<FormSubmission> GetFormSubmission(string id);
+        Task<List<FormSubmission>> GetFormSubmissions(string? templateId = null);
+        Task<FormSubmission?> GetFormSubmission(string id);
         Task<bool> SaveFormSubmission(FormSubmission submission);
         Task<bool> UpdateSubmissionStatus(string id, SubmissionStatus status);
         Task<bool> AddFormApproval(FormApproval approval);
@@ -79,7 +80,7 @@ namespace EFormBuilder.Services
             });
         }
 
-        public async Task<List<FormTemplate>?> GetFormTemplates()
+        public async Task<List<FormTemplate>> GetFormTemplates()
         {
             // Simulate an async operation
             await Task.Delay(10);
@@ -143,7 +144,7 @@ namespace EFormBuilder.Services
             }
         }
 
-        public async Task<List<FormSubmission>?> GetFormSubmissions(string templateId = null)
+        public async Task<List<FormSubmission>> GetFormSubmissions(string? templateId = null)
         {
             await Task.Delay(10);
             

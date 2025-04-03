@@ -1,3 +1,4 @@
+// Path: EFormBuilder/Pages/Forms/Submissions.razor
 @page "/forms/submissions"
 @page "/forms/submissions/{FormId}"
 @using EFormBuilder.Models
@@ -26,7 +27,7 @@
         }
     </div>
     
-    @if (Submissions == null)
+    @if (FormSubmissions == null)
     {
         <div class="text-center p-6">
             <div class="spinner-border text-primary" role="status">
@@ -34,7 +35,7 @@
             </div>
         </div>
     }
-    else if (Submissions.Count == 0)
+    else if (FormSubmissions.Count == 0)
     {
         <div class="bg-white rounded-lg shadow-md p-8 text-center">
             <div class="mb-4 text-5xl text-gray-400">
@@ -78,7 +79,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach (var submission in Submissions)
+                        @foreach (var submission in FormSubmissions)
                         {
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -125,7 +126,7 @@
     [Parameter]
     public string FormId { get; set; }
     
-    private List<FormSubmission> Submissions { get; set; }
+    private List<FormSubmission> FormSubmissions { get; set; }
     private FormTemplate FormTemplate { get; set; }
     private List<FormTemplate> AllFormTemplates { get; set; }
     
@@ -136,11 +137,11 @@
         if (!string.IsNullOrEmpty(FormId))
         {
             FormTemplate = await FormService.GetFormTemplate(FormId);
-            Submissions = await FormService.GetFormSubmissions(FormId);
+            FormSubmissions = await FormService.GetFormSubmissions(FormId);
         }
         else
         {
-            Submissions = await FormService.GetFormSubmissions();
+            FormSubmissions = await FormService.GetFormSubmissions();
         }
     }
     
@@ -171,11 +172,11 @@
         // Refresh submissions
         if (!string.IsNullOrEmpty(FormId))
         {
-            Submissions = await FormService.GetFormSubmissions(FormId);
+            FormSubmissions = await FormService.GetFormSubmissions(FormId);
         }
         else
         {
-            Submissions = await FormService.GetFormSubmissions();
+            FormSubmissions = await FormService.GetFormSubmissions();
         }
     }
 }

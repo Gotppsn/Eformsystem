@@ -34,16 +34,3 @@
     </div>
 </body>
 </html>
-
-@functions {
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public class ErrorModel : PageModel
-    {
-        public string ErrorMessage { get; set; }
-
-        public void OnGet()
-        {
-            ErrorMessage = "An error occurred while processing your request.";
-        }
-    }
-}
